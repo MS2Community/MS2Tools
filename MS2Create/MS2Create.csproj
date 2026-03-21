@@ -11,6 +11,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
         <OutputPath>..\Release\</OutputPath>
+        <PublishSingleFile>true</PublishSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\MS2Lib\MS2Lib\MS2Lib.csproj"/>
