@@ -91,12 +91,29 @@ internal class Program {
         (string filePath, string relativePath) = filePaths[index];
 
         uint id = index + 1;
-        FileStream fsFile = File.OpenRead(filePath);
+        Stream dataStream = OpenNormalized(filePath);
         IMS2FileInfo info = new MS2FileInfo(id.ToString(), relativePath);
-        IMS2FileHeader header = new MS2FileHeader(fsFile.Length, id, 0, GetCompressionTypeFromFileExtension(filePath));
-        IMS2File file = new MS2File(archive, fsFile, info, header, false);
+        IMS2FileHeader header = new MS2FileHeader(dataStream.Length, id, 0, GetCompressionTypeFromFileExtension(filePath));
+        IMS2File file = new MS2File(archive, dataStream, info, header, false);
 
         archive.Add(file);
+    }
+
+    private static Stream OpenNormalized(string filePath) {
+        CompressionType ct = GetCompressionTypeFromFileExtension(filePath);
+        if (ct == CompressionType.Png || ct == CompressionType.Usm) {
+            return File.OpenRead(filePath);
+        }
+
+        byte[] raw = File.ReadAllBytes(filePath);
+        int dst = 0;
+        for (int src = 0; src < raw.Length; src++) {
+            if (raw[src] != (byte)'\r') {
+                raw[dst++] = raw[src];
+            }
+        }
+
+        return new MemoryStream(raw, 0, dst, writable: false);
     }
 
     private static (string FullPath, string RelativePath)[] GetFilesRelative(string path) {
@@ -108,8 +125,10 @@ internal class Program {
         var result = new (string FullPath, string RelativePath)[files.Length];
 
         for (int i = 0; i < files.Length; i++) {
-            result[i] = (files[i], files[i].Remove(path));
+            result[i] = (files[i], files[i].Remove(path).Replace('\\', '/'));
         }
+
+        Array.Sort(result, (a, b) => StringComparer.Ordinal.Compare(a.RelativePath, b.RelativePath));
 
         return result;
     }
