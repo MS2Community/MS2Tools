@@ -99,9 +99,13 @@ internal class Program {
         archive.Add(file);
     }
 
+    private static readonly HashSet<string> TextExtensions = new(StringComparer.OrdinalIgnoreCase) {
+        ".xml", ".json", ".xblock", ".yml", ".yaml", ".txt", ".cs", ".cfg", ".ini",
+        ".bat", ".sh", ".md", ".csv", ".html", ".htm", ".lua", ".ifl",
+    };
+
     private static Stream OpenNormalized(string filePath) {
-        CompressionType ct = GetCompressionTypeFromFileExtension(filePath);
-        if (ct == CompressionType.Png || ct == CompressionType.Usm) {
+        if (!TextExtensions.Contains(Path.GetExtension(filePath))) {
             return File.OpenRead(filePath);
         }
 
