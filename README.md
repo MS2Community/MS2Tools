@@ -8,7 +8,7 @@ By default the scripts are made to use syncMode 0 (Sync) so if you want faster e
 
 # Building
 
-```
+```sh
 dotnet build MS2Tools.sln -c Release
 ```
 
@@ -16,7 +16,7 @@ That produces framework-dependent output and needs a .NET 8 runtime installed to
 
 To produce standalone binaries that carry their own runtime, use `publish.sh`:
 
-```
+```sh
 ./publish.sh                          # publishes for the current machine
 ./publish.sh --rid linux-x64          # publishes for another architecture
 ./publish.sh --rid win-x64 --out dist
@@ -46,7 +46,7 @@ MS2Create produce byte-identical `.m2d` and `.m2h` files from the same input.
 `determinism-check.sh` builds a few small folders from a LithMS2-XML checkout and
 compares the result against recorded sha256 hashes:
 
-```
+```sh
 ./determinism-check.sh                       # uses publish/<rid>/MS2Create and ../LithMS2-XML
 ./determinism-check.sh --xml-repo /path/to/LithMS2-XML
 ```
